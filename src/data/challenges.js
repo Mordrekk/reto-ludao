@@ -28,6 +28,12 @@ export const LEVELS = {
     emoji: '👑',
     color: '#9b59b6',
     description: '¿Pero quién narices eres tú?'
+  },
+  dios: {
+    name: 'DIOS',
+    emoji: '🌀',
+    color: '#ff00ff',
+    description: '¿Brujo? No, esto es real ( ͡° ͜ʖ ͡°)'
   }
 }
 
@@ -42,9 +48,15 @@ export const CHALLENGES = {
     { id: 'p7', exercise: '30 segundos wall sit', reps: 30, unit: 'segundos' },
     { id: 'p8', exercise: '25 elevaciones de talón', reps: 25, unit: 'reps' },
     { id: 'p9', exercise: '10 flexiones con pausa', reps: 10, unit: 'reps' },
-    { id: 'p10', exercise: '20 skiping alto', reps: 20, unit: 'reps' },
+    { id: 'p10', exercise: '20 skipping alto', reps: 20, unit: 'reps' },
     { id: 'p11', exercise: '15 zancadas caminando', reps: 15, unit: 'reps' },
-    { id: 'p12', exercise: '30 segundos tabla lateral', reps: 30, unit: 'segundos' }
+    { id: 'p12', exercise: '30 segundos tabla lateral', reps: 30, unit: 'segundos' },
+    { id: 'p13', exercise: '25 curl de bíceps con mochila', reps: 25, unit: 'reps' },
+    { id: 'p14', exercise: '20 sumergencias en banco', reps: 20, unit: 'reps' },
+    { id: 'p15', exercise: '10 flexiones explosivas', reps: 10, unit: 'reps' },
+    { id: 'p16', exercise: '30 segundos sentadilla isométrica', reps: 30, unit: 'segundos' },
+    { id: 'p17', exercise: '15 jumping jacks', reps: 15, unit: 'reps' },
+    { id: 'p18', exercise: '20 segundos Superman hold', reps: 20, unit: 'segundos' }
   ],
   medio: [
     { id: 'm1', exercise: '30 flexiones archer', reps: 30, unit: 'reps' },
@@ -58,7 +70,13 @@ export const CHALLENGES = {
     { id: 'm9', exercise: '15 muscle-ups falsos', reps: 15, unit: 'reps' },
     { id: 'm10', exercise: '40 segundos L-sit en suelo', reps: 40, unit: 'segundos' },
     { id: 'm11', exercise: '25 elevaciones de piernas colgado', reps: 25, unit: 'reps' },
-    { id: 'm12', exercise: '20 zancadas con salto', reps: 20, unit: 'reps' }
+    { id: 'm12', exercise: '20 zancadas con salto', reps: 20, unit: 'reps' },
+    { id: 'm13', exercise: '15 pull-ups strict', reps: 15, unit: 'reps' },
+    { id: 'm14', exercise: '30 segundos ghost hold plank', reps: 30, unit: 'segundos' },
+    { id: 'm15', exercise: '20 flexiones declining', reps: 20, unit: 'reps' },
+    { id: 'm16', exercise: '25 segundos handstand hold', reps: 25, unit: 'segundos' },
+    { id: 'm17', exercise: '15 muscle-ups negativos', reps: 15, unit: 'reps' },
+    { id: 'm18', exercise: '20 segundos flexión isométrica', reps: 20, unit: 'segundos' }
   ],
   avanzado: [
     { id: 'a1', exercise: '10 flexiones en pino', reps: 10, unit: 'reps' },
@@ -72,7 +90,13 @@ export const CHALLENGES = {
     { id: 'a9', exercise: '10 handstand push-ups negativos', reps: 10, unit: 'reps' },
     { id: 'a10', exercise: '25 pull-ups con pausa arriba', reps: 25, unit: 'reps' },
     { id: 'a11', exercise: '30 segundos tuck planch', reps: 30, unit: 'segundos' },
-    { id: 'a12', exercise: '15 pseudo planche push-ups', reps: 15, unit: 'reps' }
+    { id: 'a12', exercise: '15 pseudo planche push-ups', reps: 15, unit: 'reps' },
+    { id: 'a13', exercise: '12 flexiones en pino strict', reps: 12, unit: 'reps' },
+    { id: 'a14', exercise: '20 segundos straddle planch', reps: 20, unit: 'segundos' },
+    { id: 'a15', exercise: '10 dragon flag negativos lentos', reps: 10, unit: 'reps' },
+    { id: 'a16', exercise: '15 segundos one arm dead hang', reps: 15, unit: 'segundos' },
+    { id: 'a17', exercise: '25 pull-ups con 5kg extra', reps: 25, unit: 'reps' },
+    { id: 'a18', exercise: '30 segundos handstand walking', reps: 30, unit: 'segundos' }
   ],
   elite: [
     { id: 'e1', exercise: '5 handstand push-ups completos', reps: 5, unit: 'reps' },
@@ -86,7 +110,13 @@ export const CHALLENGES = {
     { id: 'e9', exercise: '10 dragon flag negatives', reps: 10, unit: 'reps' },
     { id: 'e10', exercise: '20 segundos one arm flexión', reps: 20, unit: 'segundos' },
     { id: 'e11', exercise: '7 muscle-ups en anillas', reps: 7, unit: 'reps' },
-    { id: 'e12', exercise: '25 segundos handstand plank', reps: 25, unit: 'segundos' }
+    { id: 'e12', exercise: '25 segundos handstand plank', reps: 25, unit: 'segundos' },
+    { id: 'e13', exercise: '5 handstand push-ups strict', reps: 5, unit: 'reps' },
+    { id: 'e14', exercise: '15 segundos full front lever', reps: 15, unit: 'segundos' },
+    { id: 'e15', exercise: '3 muscle-ups explosivos', reps: 3, unit: 'reps' },
+    { id: 'e16', exercise: '12 segundos one arm handstand', reps: 12, unit: 'segundos' },
+    { id: 'e17', exercise: '20 segundos tucked iron cross', reps: 20, unit: 'segundos' },
+    { id: 'e18', exercise: '5 dragon flags completos', reps: 5, unit: 'reps' }
   ],
   leyenda: [
     { id: 'l1', exercise: '1 handstand push-up completo sin apoyo', reps: 1, unit: 'rep' },
@@ -100,7 +130,33 @@ export const CHALLENGES = {
     { id: 'l9', exercise: '10 segundos tucked planch', reps: 10, unit: 'segundos' },
     { id: 'l10', exercise: '5 iron cross negatives en anillas', reps: 5, unit: 'reps' },
     { id: 'l11', exercise: '30 segundos full planch', reps: 30, unit: 'segundos' },
-    { id: 'l12', exercise: '1 one arm pull-up', reps: 1, unit: 'rep' }
+    { id: 'l12', exercise: '1 one arm pull-up', reps: 1, unit: 'rep' },
+    { id: 'l13', exercise: '8 handstand push-ups en pareja', reps: 8, unit: 'reps' },
+    { id: 'l14', exercise: '20 segundos one arm front lever', reps: 20, unit: 'segundos' },
+    { id: 'l15', exercise: '2 muscle-ups con 20kg extra', reps: 2, unit: 'reps' },
+    { id: 'l16', exercise: '12 segundos straddle front lever', reps: 12, unit: 'segundos' },
+    { id: 'l17', exercise: '5 back lever full con pausa', reps: 5, unit: 'reps' },
+    { id: 'l18', exercise: '1 planche push-up completo', reps: 1, unit: 'rep' }
+  ],
+  dios: [
+    { id: 'd1', exercise: '1 one arm handstand push-up', reps: 1, unit: 'rep' },
+    { id: 'd2', exercise: '5 front lever pull-ups', reps: 5, unit: 'reps' },
+    { id: 'd3', exercise: '10 segundos iron cross completo', reps: 10, unit: 'segundos' },
+    { id: 'd4', exercise: '3 one arm muscle-ups', reps: 3, unit: 'reps' },
+    { id: 'd5', exercise: '15 segundos manna perfecto', reps: 15, unit: 'segundos' },
+    { id: 'd6', exercise: '2 dragon flag strict por brazo', reps: 2, unit: 'reps' },
+    { id: 'd7', exercise: '1 handstand push-up con 15kg extra', reps: 1, unit: 'rep' },
+    { id: 'd8', exercise: '8 segundos one arm front lever', reps: 8, unit: 'segundos' },
+    { id: 'd9', exercise: '5 pseudo planche push-ups strict', reps: 5, unit: 'reps' },
+    { id: 'd10', exercise: '12 segundos full planche hold', reps: 12, unit: 'segundos' },
+    { id: 'd11', exercise: '3 back lever con 10kg extra', reps: 3, unit: 'reps' },
+    { id: 'd12', exercise: '20 segundos handstand con una mano', reps: 20, unit: 'segundos' },
+    { id: 'd13', exercise: '1 pullover en anillas desde front lever', reps: 1, unit: 'rep' },
+    { id: 'd14', exercise: '6 segundos cherry picker', reps: 6, unit: 'segundos' },
+    { id: 'd15', exercise: '4 muscle-ups explosivos con clap', reps: 4, unit: 'reps' },
+    { id: 'd16', exercise: '10 segundos straddle back lever', reps: 10, unit: 'segundos' },
+    { id: 'd17', exercise: '1 one arm pull-up con 25kg', reps: 1, unit: 'rep' },
+    { id: 'd18', exercise: '3 tucked planch a full planch', reps: 3, unit: 'reps' }
   ]
 }
 
