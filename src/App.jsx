@@ -3,44 +3,47 @@ import { LEVELS, CHALLENGES, PUNISHMENTS, PLAYERS } from './data/challenges'
 import { saveProgress, loadProgress, exportProgress, shareViaWhatsApp } from './utils/storage'
 import SplashScreen from './components/SplashScreen'
 import Confetti from './components/Confetti'
+import MusicPlayer from './components/MusicPlayer'
 import './App.css'
 
 // Sound effects using Web Audio API
-const playSound = (type) => {
-  if (!soundEnabledRef.current) return
-  try {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-    const oscillator = audioContext.createOscillator()
-    const gainNode = audioContext.createGain()
-    
-    oscillator.connect(gainNode)
-    gainNode.connect(audioContext.destination)
-    
-    if (type === 'success') {
-      oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime)
-      oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1)
-      oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2)
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3)
-      oscillator.start(audioContext.currentTime)
-      oscillator.stop(audioContext.currentTime + 0.3)
-    } else if (type === 'fail') {
-      oscillator.frequency.setValueAtTime(200, audioContext.currentTime)
-      oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1)
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2)
-      oscillator.start(audioContext.currentTime)
-      oscillator.stop(audioContext.currentTime + 0.2)
-    } else if (type === 'turn') {
-      oscillator.frequency.setValueAtTime(440, audioContext.currentTime)
-      oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.05)
-      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime)
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1)
-      oscillator.start(audioContext.currentTime)
-      oscillator.stop(audioContext.currentTime + 0.1)
+const createSoundPlayer = (enabledRef) => {
+  return (type) => {
+    if (!enabledRef.current) return
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      const oscillator = audioContext.createOscillator()
+      const gainNode = audioContext.createGain()
+      
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      
+      if (type === 'success') {
+        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime)
+        oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1)
+        oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2)
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3)
+        oscillator.start(audioContext.currentTime)
+        oscillator.stop(audioContext.currentTime + 0.3)
+      } else if (type === 'fail') {
+        oscillator.frequency.setValueAtTime(200, audioContext.currentTime)
+        oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1)
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2)
+        oscillator.start(audioContext.currentTime)
+        oscillator.stop(audioContext.currentTime + 0.2)
+      } else if (type === 'turn') {
+        oscillator.frequency.setValueAtTime(440, audioContext.currentTime)
+        oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.05)
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime)
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1)
+        oscillator.start(audioContext.currentTime)
+        oscillator.stop(audioContext.currentTime + 0.1)
+      }
+    } catch (e) {
+      // Audio not supported
     }
-  } catch (e) {
-    // Audio not supported
   }
 }
 
@@ -85,13 +88,18 @@ function App() {
   const [showStats, setShowStats] = useState(false)
   const [showAchievements, setShowAchievements] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
-  const [historyFilter, setHistoryFilter] = useState('all') // all, luis, gerard, completed, failed
+  const [historyFilter, setHistoryFilter] = useState('all')
   const [notification, setNotification] = useState(null)
   const [showConfetti, setShowConfetti] = useState(false)
   const [punishmentShake, setPunishmentShake] = useState(false)
+  
+  // Refs - must be declared before any functions that use them
   const isProcessingRef = useRef(false)
   const isInitialized = useRef(false)
   const soundEnabledRef = useRef(true)
+  
+  // Create sound player with ref access
+  const playSound = useCallback(createSoundPlayer(soundEnabledRef), [])
 
   // Check achievements
   useEffect(() => {
@@ -112,41 +120,56 @@ function App() {
       })
       setTimeout(() => setNotification(null), 3000)
     }
-  }, [gameState.luis.completedChallenges.length, gameState.gerard.completedChallenges.length, gameState.consecutiveWins])
+  }, [gameState.achievements, gameState.luis.completedChallenges.length, gameState.gerard.completedChallenges.length, gameState.consecutiveWins])
 
-  // Cargar progreso al iniciar
+  // Initialize app
   useEffect(() => {
-    if (isInitialized.current) return
-    isInitialized.current = true
-    
-    const saved = loadProgress()
-    if (saved) {
-      setGameState(prev => ({ ...prev, ...saved }))
+    const initializeApp = () => {
+      if (isInitialized.current) return
+      isInitialized.current = true
+      
+      // Load saved progress
+      const saved = loadProgress()
+      if (saved) {
+        setGameState(prev => ({ ...prev, ...saved }))
+      }
+      
+      // Get first challenge after a short delay to ensure state is set
+      setTimeout(() => {
+        getNewChallenge()
+      }, 100)
     }
-    getNewChallenge()
+    
+    initializeApp()
   }, [])
 
-  // Guardar progreso cuando cambie
+  // Save progress when state changes
   useEffect(() => {
-    if (gameState.currentChallenge !== null || isInitialized.current) {
+    if (isInitialized.current) {
       saveProgress(gameState)
     }
   }, [gameState])
 
   const getNewChallenge = useCallback(() => {
-    if (isProcessingRef.current) return
+    if (isProcessingRef.current) return false
+    
     setGameState(prev => {
-      const levelChallenges = CHALLENGES[prev.currentLevel] || []
+      // Skip if no level challenges exist
+      const levelChallenges = CHALLENGES[prev.currentLevel]
+      if (!levelChallenges || levelChallenges.length === 0) {
+        return prev
+      }
+      
       const currentPlayer = prev[prev.currentTurn]
       const availableChallenges = levelChallenges.filter(
         c => !currentPlayer.completedChallenges.includes(c.id)
       )
       
       if (availableChallenges.length === 0) {
-    setNotification({
-      type: 'success',
-      message: `🎉 ¡${PLAYERS[prev.currentTurn].name} ha completado todos los retos de ${LEVELS[prev.currentLevel].name}!`
-    })
+        setNotification({
+          type: 'success',
+          message: `🎉 ¡${PLAYERS[prev.currentTurn].name} ha completado todos los retos de ${LEVELS[prev.currentLevel].name}!`
+        })
         setTimeout(() => setNotification(null), 4000)
         return prev
       }
@@ -157,12 +180,14 @@ function App() {
         currentChallenge: { ...challenge, startedAt: Date.now() }
       }
     })
+    
+    return true
   }, [])
 
   const handleCompleteChallenge = useCallback(() => {
     if (isProcessingRef.current || !gameState.currentChallenge) return
-    isProcessingRef.current = true
     
+    isProcessingRef.current = true
     const playerKey = gameState.currentTurn
     const challengeId = gameState.currentChallenge.id
 
@@ -199,32 +224,35 @@ function App() {
       getNewChallenge()
       isProcessingRef.current = false
     }, 1500)
-  }, [gameState.currentTurn, gameState.currentChallenge, getNewChallenge])
+  }, [gameState.currentTurn, gameState.currentChallenge, playSound, getNewChallenge])
 
   const handleFailChallenge = useCallback(() => {
     if (isProcessingRef.current || !gameState.currentChallenge) return
-    isProcessingRef.current = true
     
+    isProcessingRef.current = true
     const playerKey = gameState.currentTurn
+    const currentChallenge = gameState.currentChallenge
     const punishment = getRandomItem(PUNISHMENTS)
 
     playSound('fail')
     setShowConfetti(true)
     setPunishmentShake(true)
     setTimeout(() => setPunishmentShake(false), 500)
+    
     setGameState(prev => ({
       ...prev,
       [playerKey]: {
         ...prev[playerKey],
-        failedChallenges: [...prev[playerKey].failedChallenges, prev.currentChallenge.id]
+        failedChallenges: [...prev[playerKey].failedChallenges, currentChallenge.id]
       },
       consecutiveWins: { ...prev.consecutiveWins, [playerKey]: 0 },
       currentPunishment: punishment,
       showPunishment: true,
+      currentChallenge: null,
       challengeHistory: [
         ...prev.challengeHistory,
         { 
-          ...prev.currentChallenge, 
+          ...currentChallenge, 
           completed: false, 
           player: playerKey, 
           failedAt: Date.now(),
@@ -232,21 +260,21 @@ function App() {
         }
       ]
     }))
+    
     setTimeout(() => {
       isProcessingRef.current = false
     }, 500)
-  }, [gameState.currentTurn, gameState.currentChallenge])
+  }, [gameState.currentTurn, gameState.currentChallenge, playSound])
 
   const closePunishmentModal = useCallback(() => {
     setShowConfetti(false)
     setGameState(prev => ({
       ...prev,
       showPunishment: false,
-      currentChallenge: null
+      currentPunishment: null
     }))
     setTimeout(() => {
       getNewChallenge()
-      isProcessingRef.current = false
     }, 500)
   }, [getNewChallenge])
 
@@ -257,7 +285,7 @@ function App() {
       currentTurn: prev.currentTurn === 'luis' ? 'gerard' : 'luis'
     }))
     setTimeout(() => getNewChallenge(), 300)
-  }, [getNewChallenge])
+  }, [playSound, getNewChallenge])
 
   const handleLevelChange = useCallback((level) => {
     setGameState(prev => ({
@@ -269,7 +297,7 @@ function App() {
   }, [getNewChallenge])
 
   const handleResetProgress = useCallback(() => {
-    if (confirm('Seguro que quieres resetear todo el progreso? ')) {
+    if (confirm('Seguro que quieres resetear todo el progreso?')) {
       setGameState({
         currentLevel: 'principiante',
         currentTurn: 'luis',
@@ -286,22 +314,22 @@ function App() {
     }
   }, [getNewChallenge])
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     exportProgress(gameState)
     setNotification({ type: 'info', message: 'Progreso exportado!' })
     setTimeout(() => setNotification(null), 2000)
-  }
+  }, [gameState])
 
-  const handleShareWhatsApp = () => {
+  const handleShareWhatsApp = useCallback(() => {
     shareViaWhatsApp({
       luis: gameState.luis,
       gerard: gameState.gerard,
       currentLevel: gameState.currentLevel,
       currentTurn: gameState.currentTurn
     })
-  }
+  }, [gameState])
 
-  const handleImport = (data) => {
+  const handleImport = useCallback((data) => {
     try {
       setGameState(prev => ({ ...prev, ...data }))
       setShowImportModal(false)
@@ -311,8 +339,9 @@ function App() {
       setNotification({ type: 'error', message: 'Error al importar' })
       setTimeout(() => setNotification(null), 2000)
     }
-  }
+  }, [])
 
+  // Show splash screen first
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />
   }
@@ -324,7 +353,7 @@ function App() {
         <div className="logo">
           <span className="logo-text">RETO</span>
           <span className="logo-accent">LUDAO'</span>
-          <span className="logo-troll"> ( ͡° ͜ʖ ͡°)</span>
+          <span className="logo-troll">( ͡° ͜ʖ ͡°)</span>
         </div>
         <div className="header-controls">
           <button className="btn btn-icon" onClick={() => setShowAchievements(!showAchievements)} title="Logros">
@@ -388,7 +417,7 @@ function App() {
                 className={`filter-btn ${historyFilter === 'all' ? 'active' : ''}`}
                 onClick={() => setHistoryFilter('all')}
               >
-               Todos
+                Todos
               </button>
               <button 
                 className={`filter-btn ${historyFilter === 'luis' ? 'active' : ''}`}
@@ -483,7 +512,7 @@ function App() {
                   
                   return (
                     <div 
-                      key={`${entry.id}-${index}`} 
+                      key={`${entry.id}-${entry.completedAt || entry.failedAt}-${index}`} 
                       className={`history-entry ${entry.completed ? 'success' : 'fail'}`}
                     >
                       <div className="history-entry-left">
@@ -599,20 +628,21 @@ function App() {
 
           <div className="challenge-actions">
             <button className="btn btn-success btn-lg" onClick={handleCompleteChallenge}>
-              !Hecho!
+              ¡Hecho!
             </button>
             <button className="btn btn-danger btn-lg" onClick={handleFailChallenge}>
               No puedo
             </button>
-          </div>            <button className="btn btn-pass animate-pulse" onClick={handleNextTurn}>
-              ⏭️ Pasar turno a {PLAYERS[gameState.currentTurn === 'luis' ? 'gerard' : 'luis'].name}
-            </button>
+          </div>
+          <button className="btn btn-pass animate-pulse" onClick={handleNextTurn}>
+            ⏭️ Pasar turno a {PLAYERS[gameState.currentTurn === 'luis' ? 'gerard' : 'luis'].name}
+          </button>
         </div>
       ) : (
         <div className="no-challenge animate-fade-in">
           <p className="trollface">ಠ_ಠ</p>
-          <p>¿Y el reto? ¿Perdido? 🤔</p>
-          <button className="btn btn-primary" onClick={getNewChallenge}>
+          <p>¿Y el reto? 🤔</p>
+          <button className="btn btn-primary" onClick={() => getNewChallenge()}>
             🎲 Sacar nuevo reto
           </button>
         </div>
@@ -653,14 +683,14 @@ function App() {
             
             <div className="punishment-body epic-body">
               <div className="epic-player-fail">
-                <div className="epic-player-icon">{PLAYERS[gameState.currentTurn].emoji}</div>
-                <div className="epic-player-name">{PLAYERS[gameState.currentTurn].name}</div>
+                <div className="epic-player-icon">{PLAYERS[gameState.currentTurn]?.emoji || '😢'}</div>
+                <div className="epic-player-name">{PLAYERS[gameState.currentTurn]?.name || 'Jugador'}</div>
                 <div className="epic-failed-text">FALLÓ</div>
               </div>
               
               <div className="epic-exercise-failed">
                 <span className="epic-cross">✖</span>
-                {gameState.currentChallenge?.exercise}
+                {gameState.currentChallenge?.exercise || 'Ejercicio'}
               </div>
               
               <div className="punishment-card epic-punishment-card">
@@ -723,6 +753,9 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Music Player */}
+      <MusicPlayer />
 
       {/* Footer */}
       <footer className="footer">
