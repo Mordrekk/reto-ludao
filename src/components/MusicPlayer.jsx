@@ -3,13 +3,14 @@ import './MusicPlayer.css'
 
 const YOUTUBE_VIDEO_ID = '0QjHiah9Z3I'
 
-function MusicPlayer() {
+function MusicPlayer({ startMuted = true, onReady: onPlayerReady, onUnmute }) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(50)
-  const [isMuted, setIsMuted] = useState(false)
+  const [isMuted, setIsMuted] = useState(startMuted)
   const [isReady, setIsReady] = useState(false)
   const playerRef = useRef(null)
   const playerContainerRef = useRef(null)
+  const startMutedRef = useRef(startMuted)
 
   // Load YouTube IFrame API
   useEffect(() => {
@@ -40,7 +41,7 @@ function MusicPlayer() {
       width: '0',
       videoId: YOUTUBE_VIDEO_ID,
       playerVars: {
-        autoplay: 0,
+        autoplay: 1,
         controls: 0,
         disablekb: 1,
         enablejsapi: 1,
@@ -50,12 +51,22 @@ function MusicPlayer() {
         playlist: YOUTUBE_VIDEO_ID,
         rel: 0,
         showinfo: 0,
+        mute: startMutedRef.current ? 1 : 0,
       },
       events: {
         onReady: (event) => {
           playerRef.current = event.target
           setIsReady(true)
           player.setVolume(volume)
+          setIsPlaying(true)
+          // Pass unmute function to parent so they can trigger it on user interaction
+          if (onUnmute) {
+            onUnmute(() => {
+              player.unMute()
+              player.setVolume(50)
+              setIsMuted(false)
+            })
+          }
         },
         onStateChange: (event) => {
           if (event.data === window.YT.PlayerState.ENDED) {
@@ -65,6 +76,18 @@ function MusicPlayer() {
       }
     })
   }, [volume])
+
+  // Expose unmute function for external use (e.g., after splash completes)
+  const unmuteAndPlay = useCallback(() => {
+    if (!playerRef.current || !isReady) return
+    playerRef.current.unMute()
+    playerRef.current.setVolume(volume)
+    setIsMuted(false)
+    if (!isPlaying) {
+      playerRef.current.playVideo()
+      setIsPlaying(true)
+    }
+  }, [isReady, volume, isPlaying])
 
   const togglePlay = useCallback(() => {
     if (!playerRef.current || !isReady) return

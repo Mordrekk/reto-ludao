@@ -152,12 +152,12 @@
   mask-composite: exclude;
 }
 
-.name-gerard {
+.name-player1 {
   --card-color: #0f3460;
   animation: cardFloat 3s ease-in-out infinite;
 }
 
-.name-luis {
+.name-player2 {
   --card-color: #e94560;
   animation: cardFloat 3s ease-in-out infinite 0.5s;
 }

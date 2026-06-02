@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import './SplashScreen.css'
 
-const SplashScreen = ({ onComplete }) => {
+const SplashScreen = ({ onComplete, playerNames }) => {
   const [phase, setPhase] = useState(0)
+  
+  // Use custom names or defaults
+  const name1 = playerNames?.player1 || 'Luis'
+  const name2 = playerNames?.player2 || 'Gerard'
 
   useEffect(() => {
     const timers = [
@@ -32,12 +36,12 @@ const SplashScreen = ({ onComplete }) => {
       </div>
 
       <div className={`names-container ${phase >= 2 ? 'visible' : ''}`}>
-        <div className="name-card name-gerard">
-          <div className="name-icon">🤙</div>
+        <div className="name-card name-player1">
+          <div className="name-icon">😎</div>
           <div className="name-info">
-            <span className="name-label">Diseñado para</span>
-            <span className="name-title">Gerard Martínez</span>
-            <span className="name-subtitle">El maestro del cuerpo 💪</span>
+            <span className="name-label">Jugador 1</span>
+            <span className="name-title">{name1}</span>
+            <span className="name-subtitle">¡A格斗! 💪</span>
           </div>
           <div className="name-decoration"></div>
         </div>
@@ -47,12 +51,12 @@ const SplashScreen = ({ onComplete }) => {
           <div className="vs-flames">🔥🔥🔥</div>
         </div>
 
-        <div className="name-card name-luis">
-          <div className="name-icon">😎</div>
+        <div className="name-card name-player2">
+          <div className="name-icon">🤙</div>
           <div className="name-info">
-            <span className="name-label">Creado por</span>
-            <span className="name-title">Luis Navarro</span>
-            <span className="name-subtitle">El arquitecto del dolor 🔥</span>
+            <span className="name-label">Jugador 2</span>
+            <span className="name-title">{name2}</span>
+            <span className="name-subtitle">¡Prepárate! 🔥</span>
           </div>
           <div className="name-decoration"></div>
         </div>

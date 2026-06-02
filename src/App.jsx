@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { LEVELS, CHALLENGES, PUNISHMENTS, PLAYERS } from './data/challenges'
-import { saveProgress, loadProgress, exportProgress, shareViaWhatsApp } from './utils/storage'
+import { saveProgress, loadProgress, exportProgress, shareViaWhatsApp, savePlayerNames, loadPlayerNames } from './utils/storage'
 import SplashScreen from './components/SplashScreen'
 import Confetti from './components/Confetti'
 import MusicPlayer from './components/MusicPlayer'
+import NameSetup from './components/NameSetup'
 import './App.css'
 
 // Sound effects using Web Audio API
@@ -70,7 +71,9 @@ const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)]
 const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5)
 
 function App() {
-  const [showSplash, setShowSplash] = useState(true)
+  const [showNameSetup, setShowNameSetup] = useState(true)
+  const [showSplash, setShowSplash] = useState(false)
+  const [playerNames, setPlayerNames] = useState({ player1: 'Luis', player2: 'Gerard' })
   const [gameState, setGameState] = useState({
     currentLevel: 'principiante',
     currentTurn: 'luis',
@@ -97,6 +100,7 @@ function App() {
   const isProcessingRef = useRef(false)
   const isInitialized = useRef(false)
   const soundEnabledRef = useRef(true)
+  const musicUnmuteRef = useRef(null) // Callback to unmute music when splash completes
   
   // Create sound player with ref access
   const playSound = useCallback(createSoundPlayer(soundEnabledRef), [])
@@ -122,8 +126,26 @@ function App() {
     }
   }, [gameState.achievements, gameState.luis.completedChallenges.length, gameState.gerard.completedChallenges.length, gameState.consecutiveWins])
 
-  // Initialize app
+  // Initialize app - load saved names first
   useEffect(() => {
+    const savedNames = loadPlayerNames()
+    if (savedNames) {
+      setPlayerNames(savedNames)
+    }
+  }, [])
+
+  // Handle name setup completion
+  const handleNamesComplete = useCallback((names) => {
+    setPlayerNames(names)
+    savePlayerNames(names)
+    setShowNameSetup(false)
+    setShowSplash(true)
+  }, [])
+
+  // Initialize app after splash
+  useEffect(() => {
+    if (showNameSetup || showSplash) return // Don't initialize during splash
+    
     const initializeApp = () => {
       if (isInitialized.current) return
       isInitialized.current = true
@@ -141,7 +163,7 @@ function App() {
     }
     
     initializeApp()
-  }, [])
+  }, [showNameSetup, showSplash])
 
   // Save progress when state changes
   useEffect(() => {
@@ -166,9 +188,10 @@ function App() {
       )
       
       if (availableChallenges.length === 0) {
+        const name = prev.currentTurn === 'luis' ? playerNames.player1 : playerNames.player2
         setNotification({
           type: 'success',
-          message: `🎉 ¡${PLAYERS[prev.currentTurn].name} ha completado todos los retos de ${LEVELS[prev.currentLevel].name}!`
+          message: `🎉 ¡${name} ha completado todos los retos de ${LEVELS[prev.currentLevel].name}!`
         })
         setTimeout(() => setNotification(null), 4000)
         return prev
@@ -182,7 +205,7 @@ function App() {
     })
     
     return true
-  }, [])
+  }, [playerNames])
 
   const handleCompleteChallenge = useCallback(() => {
     if (isProcessingRef.current || !gameState.currentChallenge) return
@@ -213,10 +236,11 @@ function App() {
       currentChallenge: null
     }))
 
+    const playerName = playerKey === 'luis' ? playerNames.player1 : playerNames.player2
     playSound('success')
     setNotification({
       type: 'success',
-      message: `💪 ¡Reto completado por ${PLAYERS[playerKey].name}! ${PLAYERS[playerKey].emoji}`
+      message: `💪 ¡Reto completado por ${playerName}! ${playerKey === 'luis' ? '😎' : '🤙'}`
     })
     setTimeout(() => setNotification(null), 3000)
 
@@ -224,7 +248,7 @@ function App() {
       getNewChallenge()
       isProcessingRef.current = false
     }, 1500)
-  }, [gameState.currentTurn, gameState.currentChallenge, playSound, getNewChallenge])
+  }, [gameState.currentTurn, gameState.currentChallenge, playerNames, playSound, getNewChallenge])
 
   const handleFailChallenge = useCallback(() => {
     if (isProcessingRef.current || !gameState.currentChallenge) return
@@ -341,9 +365,42 @@ function App() {
     }
   }, [])
 
-  // Show splash screen first
+  // Show name setup first
+  if (showNameSetup) {
+    return (
+      <>
+        <NameSetup 
+          defaultNames={playerNames}
+          onComplete={handleNamesComplete}
+        />
+        <MusicPlayer 
+          startMuted={true}
+          onUnmute={(fn) => { musicUnmuteRef.current = fn }}
+        />
+      </>
+    )
+  }
+
+  // Show splash screen second
   if (showSplash) {
-    return <SplashScreen onComplete={() => setShowSplash(false)} />
+    return (
+      <>
+        <SplashScreen 
+          playerNames={playerNames}
+          onComplete={() => {
+            // Unmute music when splash completes (first user interaction)
+            if (musicUnmuteRef.current) {
+              musicUnmuteRef.current()
+            }
+            setShowSplash(false)
+          }} 
+        />
+        <MusicPlayer 
+          startMuted={true} 
+          onUnmute={(fn) => { musicUnmuteRef.current = fn }} 
+        />
+      </>
+    )
   }
 
   return (
@@ -423,13 +480,13 @@ function App() {
                 className={`filter-btn ${historyFilter === 'luis' ? 'active' : ''}`}
                 onClick={() => setHistoryFilter('luis')}
               >
-                😎 Luis
+                😎 {playerNames.player1}
               </button>
               <button 
                 className={`filter-btn ${historyFilter === 'gerard' ? 'active' : ''}`}
                 onClick={() => setHistoryFilter('gerard')}
               >
-                🤙 Gerard
+                🤙 {playerNames.player2}
               </button>
               <button 
                 className={`filter-btn ${historyFilter === 'completed' ? 'active' : ''}`}
@@ -525,7 +582,7 @@ function App() {
                           </div>
                           <div className="history-entry-meta">
                             <span className="history-entry-player">
-                              {PLAYERS[entry.player]?.emoji} {PLAYERS[entry.player]?.name}
+                              {entry.player === 'luis' ? '😎' : '🤙'} {entry.player === 'luis' ? playerNames.player1 : playerNames.player2}
                             </span>
                             <span 
                               className="history-entry-level"
@@ -558,15 +615,15 @@ function App() {
         <div className="stats-panel">
           <div className="stats-grid">
             <div className="stat-card stat-luis">
-              <div className="stat-emoji">{PLAYERS.luis.emoji}</div>
-              <div className="stat-name">{PLAYERS.luis.name}</div>
+              <div className="stat-emoji">😎</div>
+              <div className="stat-name">{playerNames.player1}</div>
               <div className="stat-value">{gameState.luis.completedChallenges.length}</div>
               <div className="stat-label">completados</div>
               <div className="stat-fails">❌ {gameState.luis.failedChallenges.length}</div>
             </div>
             <div className="stat-card stat-gerard">
-              <div className="stat-emoji">{PLAYERS.gerard.emoji}</div>
-              <div className="stat-name">{PLAYERS.gerard.name}</div>
+              <div className="stat-emoji">🤙</div>
+              <div className="stat-name">{playerNames.player2}</div>
               <div className="stat-value">{gameState.gerard.completedChallenges.length}</div>
               <div className="stat-label">completados</div>
               <div className="stat-fails">❌ {gameState.gerard.failedChallenges.length}</div>
@@ -583,9 +640,9 @@ function App() {
 
       {/* Turn Indicator */}
       <div className="turn-indicator animate-in">
-        <div className={`turn-player ${gameState.currentTurn}`} style={{ '--player-color': PLAYERS[gameState.currentTurn].color }}>
-          <span className="turn-emoji">{PLAYERS[gameState.currentTurn].emoji}</span>
-          <span className="turn-name">Turno de {PLAYERS[gameState.currentTurn].name}</span>
+        <div className={`turn-player ${gameState.currentTurn}`} style={{ '--player-color': gameState.currentTurn === 'luis' ? '#e94560' : '#0f3460' }}>
+          <span className="turn-emoji">{gameState.currentTurn === 'luis' ? '😎' : '🤙'}</span>
+          <span className="turn-name">Turno de {gameState.currentTurn === 'luis' ? playerNames.player1 : playerNames.player2}</span>
           {gameState.consecutiveWins[gameState.currentTurn] > 0 && (
             <span className="turn-streak animate-bounce">🔥 {gameState.consecutiveWins[gameState.currentTurn]} seguidos</span>
           )}
@@ -635,7 +692,7 @@ function App() {
             </button>
           </div>
           <button className="btn btn-pass animate-pulse" onClick={handleNextTurn}>
-            ⏭️ Pasar turno a {PLAYERS[gameState.currentTurn === 'luis' ? 'gerard' : 'luis'].name}
+            ⏭️ Pasar turno a {gameState.currentTurn === 'luis' ? playerNames.player2 : playerNames.player1}
           </button>
         </div>
       ) : (
@@ -683,8 +740,8 @@ function App() {
             
             <div className="punishment-body epic-body">
               <div className="epic-player-fail">
-                <div className="epic-player-icon">{PLAYERS[gameState.currentTurn]?.emoji || '😢'}</div>
-                <div className="epic-player-name">{PLAYERS[gameState.currentTurn]?.name || 'Jugador'}</div>
+                <div className="epic-player-icon">{gameState.currentTurn === 'luis' ? '😎' : '🤙'}</div>
+                <div className="epic-player-name">{gameState.currentTurn === 'luis' ? playerNames.player1 : playerNames.player2}</div>
                 <div className="epic-failed-text">FALLÓ</div>
               </div>
               
@@ -759,7 +816,7 @@ function App() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>🤡 Reto Ludao' - Para Luis y Gerard 💪</p>
+        <p>🤡 Reto Ludao' - Para {playerNames.player1} y {playerNames.player2} 💪</p>
         <p className="footer-troll">( ͡° ͜ʖ ͡°) No te rindas, amigo ( ͡° ͜ʖ ͡°)</p>
         <button className="btn btn-import" onClick={() => setShowImportModal(true)}>
           📥 Importar progreso

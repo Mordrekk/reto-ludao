@@ -1,0 +1,205 @@
+.name-setup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  overflow: hidden;
+}
+
+.name-setup-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+  z-index: -1;
+}
+
+.name-setup-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 450px;
+  width: 100%;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.name-setup-header {
+  margin-bottom: 2rem;
+}
+
+.name-setup-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.title-reto {
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.title-luis {
+  color: #e94560;
+  text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+}
+
+.name-setup-subtitle {
+  color: #888;
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+.name-form {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 2px solid rgba(233, 69, 96, 0.3);
+}
+
+.name-input-group {
+  margin-bottom: 1.5rem;
+}
+
+.name-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.player-number {
+  background: linear-gradient(135deg, #e94560, #ff6b35);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.player-emoji {
+  font-size: 1.5rem;
+}
+
+.name-input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.name-input:focus {
+  outline: none;
+  border-color: #e94560;
+  box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+}
+
+.name-input::placeholder {
+  color: #666;
+}
+
+.name-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.name-next-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.name-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.name-form-actions .btn-secondary {
+  flex: 0 0 auto;
+}
+
+.name-form-actions .btn-success {
+  flex: 1;
+}
+
+.name-setup-footer {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.name-setup-footer .troll-face {
+  animation: blink 1s ease infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.name-setup-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.name-setup-particles .particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #e94560;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0) scale(1); 
+    opacity: 0.6;
+  }
+  50% { 
+    transform: translateY(-30px) scale(1.2); 
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .name-setup-title {
+    font-size: 2.2rem;
+  }
+  
+  .name-form {
+    padding: 1.5rem;
+  }
+  
+  .name-input {
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+  }
+}

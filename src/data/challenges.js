@@ -161,94 +161,147 @@ export const CHALLENGES = {
 }
 
 export const PUNISHMENTS = [
-  // Castigos "serios" (ejercicio)
+  // Castigos deportivos - ejercicios físicos
   { 
     id: 'pun1', 
-    text: '50 flexiones fumado 💨', 
+    text: '50 flexiones', 
     type: 'exercise',
-    emoji: '💨',
+    emoji: '💪',
     difficulty: 'medium'
   },
   { 
     id: 'pun2', 
-    text: '30 burpees fumado', 
+    text: '30 burpees explosivos', 
     type: 'exercise',
     emoji: '🔥',
     difficulty: 'hard'
   },
   { 
     id: 'pun3', 
-    text: '100 abdominales fumados', 
+    text: '100 abdominales', 
     type: 'exercise',
     emoji: '😵',
     difficulty: 'hard'
   },
   { 
     id: 'pun4', 
-    text: '1 minuto plank fumado', 
+    text: '1 minuto plank', 
     type: 'time',
     emoji: '⏱️',
     difficulty: 'medium'
   },
-  // Castigos "serios" sin fumar
   { 
     id: 'pun5', 
-    text: '24 horas sin fumar 🚭', 
-    type: 'abstinence',
-    emoji: '🚭',
-    difficulty: 'extreme'
+    text: '40 sentadillas', 
+    type: 'exercise',
+    emoji: '🦵',
+    difficulty: 'medium'
   },
   { 
     id: 'pun6', 
-    text: '48 horas sin fumar', 
-    type: 'abstinence',
-    emoji: '😤',
-    difficulty: 'extreme'
+    text: '20 dominadas', 
+    type: 'exercise',
+    emoji: '🏋️',
+    difficulty: 'hard'
   },
   { 
     id: 'pun7', 
-    text: '1 día sin hachís', 
-    type: 'abstinence',
-    emoji: '🌿',
-    difficulty: 'extreme'
+    text: '50 segundos wall sit', 
+    type: 'time',
+    emoji: '🧱',
+    difficulty: 'medium'
   },
-  // Castigos troll
   { 
     id: 'pun8', 
-    text: 'Hacer 20 flexiones mirando al suelo como Gerard 😏', 
-    type: 'troll',
-    emoji: '🤡',
-    difficulty: 'easy'
-  },{ id: 'pun9', text: 'gritar "¡SOY LUIS!" 10 veces en el balcón', type: 'troll', emoji: '📢', difficulty: 'easy' },{ id: 'pun10', text: 'Enviar un audio de 30 segundos a Gerard sobre por que eres el mejor', type: 'troll', emoji: '🎤', difficulty: 'medium' },
+    text: '30 fondos en banco', 
+    type: 'exercise',
+    emoji: '📈',
+    difficulty: 'medium'
+  },
+  { 
+    id: 'pun9', 
+    text: '25 flexiones diamante', 
+    type: 'exercise',
+    emoji: '💎',
+    difficulty: 'hard'
+  },
+  { 
+    id: 'pun10', 
+    text: '40 segundos handstand contra pared', 
+    type: 'time',
+    emoji: '🤸',
+    difficulty: 'hard'
+  },
   { 
     id: 'pun11', 
-    text: 'Hacer 10 flexiones imitanto a tu yo de 16 años', 
-    type: 'troll',
-    emoji: '👶',
-    difficulty: 'easy'
+    text: '20 muscle-ups negativos', 
+    type: 'exercise',
+    emoji: '⬆️',
+    difficulty: 'hard'
   },
   { 
     id: 'pun12', 
-    text: 'Llamar a tu madre y decirle que quieres ser payaso', 
-    type: 'troll',
-    emoji: '📞',
-    difficulty: 'medium'
+    text: '30 segundos L-sit en suelo', 
+    type: 'time',
+    emoji: '🪑',
+    difficulty: 'hard'
   },
-  // Castigos húmedos
   { 
     id: 'pun13', 
-    text: '10 burpees Y después explicar qué es el mango', 
-    type: 'troll',
-    emoji: '🥭',
+    text: '60 segundos saltar a la comba', 
+    type: 'time',
+    emoji: '🪢',
     difficulty: 'medium'
   },
   { 
     id: 'pun14', 
-    text: '30 segundos de handstand Y luego hablar español neutral 10 segundos', 
-    type: 'troll',
-    emoji: '🤡',
+    text: '15 flexiones explosivas con clap', 
+    type: 'exercise',
+    emoji: '👏',
     difficulty: 'hard'
-  },{ id: 'pun15', text: '50 burpees mientras cuentas del 1 al 20 en japones', type: 'troll', emoji: '🇯🇵', difficulty: 'hard' }
+  },
+  { 
+    id: 'pun15', 
+    text: '50 segundos sentadilla isométrica', 
+    type: 'time',
+    emoji: '🦿',
+    difficulty: 'hard'
+  },
+  { 
+    id: 'pun16', 
+    text: '20 zancadas caminando por pierna', 
+    type: 'exercise',
+    emoji: '🚶',
+    difficulty: 'medium'
+  },
+  { 
+    id: 'pun17', 
+    text: '30 segundos tabla lateral por lado', 
+    type: 'time',
+    emoji: '📏',
+    difficulty: 'medium'
+  },
+  { 
+    id: 'pun18', 
+    text: '25 elevaciones de talón', 
+    type: 'exercise',
+    emoji: '🦶',
+    difficulty: 'easy'
+  },
+  { 
+    id: 'pun19', 
+    text: '40 segundos plank con toque de hombro', 
+    type: 'time',
+    emoji: '👋',
+    difficulty: 'medium'
+  },
+  { 
+    id: 'pun20', 
+    text: '15 pike push-ups', 
+    type: 'exercise',
+    emoji: '🔺',
+    difficulty: 'hard'
+  }
 ]
 
 export const PLAYERS = {

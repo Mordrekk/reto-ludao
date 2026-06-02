@@ -1,4 +1,25 @@
 const STORAGE_KEY = 'reto-ludao-progress'
+const NAMES_KEY = 'reto-ludao-names'
+
+export const savePlayerNames = (names) => {
+  try {
+    localStorage.setItem(NAMES_KEY, JSON.stringify(names))
+    return true
+  } catch (error) {
+    console.error('Error guardando nombres:', error)
+    return false
+  }
+}
+
+export const loadPlayerNames = () => {
+  try {
+    const data = localStorage.getItem(NAMES_KEY)
+    return data ? JSON.parse(data) : null
+  } catch (error) {
+    console.error('Error cargando nombres:', error)
+    return null
+  }
+}
 
 export const saveProgress = (data) => {
   try {
